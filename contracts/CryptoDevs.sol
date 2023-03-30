@@ -11,7 +11,7 @@ contract CryptoDevs is Ownable, ERC721Enumerable {
     uint256 public _price = 0.001 ether;
 
     //pause the contract in case of emergency
-    bool public _pause;
+    bool public _paused;
 
     // max number of cryptoDevs yet to be mint
     uint256 public maxTokenIds = 20;
@@ -25,7 +25,7 @@ contract CryptoDevs is Ownable, ERC721Enumerable {
     //timestamp for when presale will End
     uint256 public presaleEnded;
     modifier onlyWhenOwnerNotPaused() {
-        require(!_pause, "Contract currently paused");
+        require(!_paused, "Contract currently paused");
         _;
     }
 
@@ -88,5 +88,19 @@ contract CryptoDevs is Ownable, ERC721Enumerable {
      */
     function _baseURI() internal view virtual override returns (string memory) {
         return _baseTokenURI;
+    }
+
+    /**
+     * @dev setPaused makes the contract paused or unpaused
+     */
+    function setPaused(bool val) public onlyOwner {
+        _paused = val;
+    }
+
+    function withdraw() external onlyOwner {
+        address _owner = owner();
+        uint256 amount = address(this).balance;
+        (bool sent, ) = _owner.call{value: amount}("");
+        require(sent, "Failed to send Ether");
     }
 }
