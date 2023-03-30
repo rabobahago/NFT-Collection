@@ -81,4 +81,12 @@ contract CryptoDevs is Ownable, ERC721Enumerable {
         tokenIds += 1;
         _safeMint(msg.sender, tokenIds);
     }
+
+    /**
+     * @dev _baseURI overrides the Openzeppelin's ERC721 implementation which by default
+     * returned an empty string for the baseURI
+     */
+    function _baseURI() internal view virtual override returns (string memory) {
+        return _baseTokenURI;
+    }
 }
